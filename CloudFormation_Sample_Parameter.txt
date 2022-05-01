@@ -43,7 +43,10 @@ KubernetesVerison
 - 1.21
 
 EKSWorkerInstanceType
-- t2.large
+- t3.xlarge
+
+EKSWorkerDiskSize
+- 150
 
 EKSScalingMinSize
 - 3
@@ -59,7 +62,7 @@ EKSScalingMaxSize
 #============================================================================#
 
 ElasticacheNodeType
-- cache.t2.small
+- cache.t3.medium
 
 ElasticachePort
 - 6379
@@ -103,4 +106,9 @@ KeyName
 BastionInstanceType
 - t2.micro
 
+BastionInstanceAMIId
+- /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+
+BastionInstanceVolumeSize
+- 8
 
