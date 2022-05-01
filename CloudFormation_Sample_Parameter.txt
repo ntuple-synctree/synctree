@@ -1,0 +1,106 @@
+#============================================================================#
+# VPC Network Configuration
+#============================================================================#
+
+VpcBlock
+- 10.0.0.0/16
+
+PublicSubnet01Block
+- 10.0.0.0/24
+
+PublicSubnet02Block
+- 10.0.2.0/24
+
+PublicSubnet03Block
+- 10.0.4.0/24
+
+PrivateSubnet01Block
+- 10.0.1.0/24
+
+PrivateSubnet02Block
+- 10.0.3.0/24
+
+PrivateSubnet03Block
+- 10.0.5.0/24
+
+PrivateSubnet04Block
+- 10.0.7.0/24
+
+PrivateSubnet05Block
+- 10.0.9.0/24
+
+PrivateSubnet06Block
+- 10.0.11.0/24
+
+#============================================================================#
+# EKS Configuration
+#============================================================================#
+
+EKSClusterName
+- eks-synctree
+
+KubernetesVerison
+- 1.21
+
+EKSWorkerInstanceType
+- t2.large
+
+EKSScalingMinSize
+- 3
+
+EKSDesiredSize
+- 3
+
+EKSScalingMaxSize
+- 6
+
+#============================================================================#
+# Elasticache
+#============================================================================#
+
+ElasticacheNodeType
+- cache.t2.small
+
+ElasticachePort
+- 6379
+
+#============================================================================#
+# Aurora Configuration
+#============================================================================#
+
+DataDBUsername
+- root
+
+DataDBPassword
+- your password
+
+DataDBPort
+- 3306
+
+LogDBUsername
+- root
+
+LogDBPassword
+- your password
+
+LogDBPort
+- 3306
+
+DBInstanceType
+- db.t3.large
+
+#============================================================================#
+# Key Pair
+#============================================================================#
+
+KeyName
+- your key name
+
+#============================================================================#
+# Bastion
+#============================================================================#
+
+BastionInstanceType
+- t2.micro
+
+
