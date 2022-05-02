@@ -81,6 +81,7 @@ Make sure you have these tools installed to install SyncTree solutions. These to
 * eksctl
 * kubectl
 * cmctl
+* docker
 
 <br>
 
