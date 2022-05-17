@@ -1153,6 +1153,8 @@ sed -i "s/YOUR-PORTAL-DOMAIN-KEY/$PORTAL_DOMAIN_KEY/" ./synctree/deploy/credenti
 cp ./templates/php.ini ./synctree/deploy/
 sed -i "s/YOUR-ELASTICACHE_ENDPOINT/$ELASTICACHE_ENDPOINT/" ./synctree/deploy/php.ini
 sed -i "s/YOUR-ELASTICACHE_PORT/$ELASTICACHE_PORT/" ./synctree/deploy/php.ini
+
+echo "AWS_ACCOUNTID=`aws sts get-caller-identity | jq '.Account' | sed 's/\"//g'`" >> ./synctree/deploy/aws.txt
 ```
 <br>
 
