@@ -54,10 +54,10 @@ KubernetesVerison
 - 1.21
 
 EKSWorkerInstanceType
-- t3.xlarge
+- t3.medium
 
 EKSWorkerDiskSize
-- 100
+- 50
 
 EKSScalingMinSize
 - 3
@@ -72,7 +72,7 @@ EKSScalingMaxSize
 # Elasticache
 
 ElasticacheNodeType
-- cache.t3.medium
+- cache.t3.micro
 
 ElasticachePort
 - 6379
@@ -100,7 +100,7 @@ LogDBPort
 - 3306
 
 DBInstanceType
-- db.t3.large
+- db.t3.medium
 
 
 # Key Pair
