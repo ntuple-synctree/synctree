@@ -1,6 +1,18 @@
+# If you are not sure which value to set, set it by referring to the sample value below.
+
 #============================================================================#
+# Stack name
+#============================================================================#
+
+Stack name
+- eks-synctree
+
+
+#============================================================================#
+# Parameters
+#============================================================================#
+
 # VPC Network Configuration
-#============================================================================#
 
 VpcBlock
 - 10.0.0.0/16
@@ -32,9 +44,8 @@ PrivateSubnet05Block
 PrivateSubnet06Block
 - 10.0.11.0/24
 
-#============================================================================#
+
 # EKS Configuration
-#============================================================================#
 
 EKSClusterName
 - eks-synctree
@@ -46,7 +57,7 @@ EKSWorkerInstanceType
 - t3.xlarge
 
 EKSWorkerDiskSize
-- 150
+- 100
 
 EKSScalingMinSize
 - 3
@@ -57,9 +68,8 @@ EKSDesiredSize
 EKSScalingMaxSize
 - 6
 
-#============================================================================#
+
 # Elasticache
-#============================================================================#
 
 ElasticacheNodeType
 - cache.t3.medium
@@ -67,9 +77,9 @@ ElasticacheNodeType
 ElasticachePort
 - 6379
 
-#============================================================================#
+
 # Aurora Configuration
-#============================================================================#
+# Do not use 'admin' username. The name is reserved at SyncTree
 
 DataDBUsername
 - root
@@ -92,16 +102,14 @@ LogDBPort
 DBInstanceType
 - db.t3.large
 
-#============================================================================#
+
 # Key Pair
-#============================================================================#
 
 KeyName
 - your key name
 
-#============================================================================#
+
 # Bastion
-#============================================================================#
 
 BastionInstanceType
 - t2.micro
@@ -110,5 +118,5 @@ BastionInstanceAMIId
 - /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
 
 BastionInstanceVolumeSize
-- 8
+- 8 # You can set the desired disk capacity.
 

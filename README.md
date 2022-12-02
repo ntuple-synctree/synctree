@@ -11,9 +11,9 @@
 * Configure EKS on a new cluster(Recomended)
 * Approximately 20 minutes to deploy infrastructure with CloudFormation.
 * It is recommended that you start with the specifications below when you first start.
-  * EKS Worker Nodes : t3.xlarge (Minimum 150 GB disk)
-  * Amazon Aurora : db.t3.large
-  * Elasticache for Redis : cache.t3.medium
+  * EKS Worker Nodes : t3.medium (Minimum 50 GB disk)
+  * Amazon Aurora : db.t3.medium
+  * Elasticache for Redis : cache.t3.micro
   * EC2 for bastion server : t2.micro
 * You can proceed with cloudformation by referring to the attached sample parameter values.
 
@@ -29,11 +29,20 @@
 
 <br>
 
-![diagram](https://user-images.githubusercontent.com/103020388/163539975-e54d3446-458d-4136-81e8-b7ead2428381.png)
+![architectrual_diagram](https://user-images.githubusercontent.com/103020388/190327215-1285374e-08e1-42dc-87db-6725e8ad19e9.png)
 
 <br>
 
-# Pre-requisites
+# Caution
+
+<br>
+
+The tasks described in this document should only be performed during the installation phase and should never be performed in the production environment
+
+<br>
+
+
+# Prerequisites
 
 <br>
 
@@ -41,7 +50,51 @@
 
 <br>
 
-# Connect Bastion Server
+# Create CloudFormation Stack
+
+<br>
+
+Move to CloudFormation page and press Create stack button.
+![create_stack](https://user-images.githubusercontent.com/103020388/190582150-a23f674a-62aa-4af2-a4ff-02f131f1ca3b.png)
+
+<br>
+
+Enter url below and press next button.
+```
+https://synctree-marketplace.s3.amazonaws.com/synctree-marketplace.yaml
+```
+![specify_template](https://user-images.githubusercontent.com/103020388/190582234-b69c8c89-9eb6-460f-a6ad-da8a828f472e.png)
+
+<br>
+
+Enter parameter values for installation. If you are not sure, please refer to the link below.
+<br>
+(https://github.com/ntuple-synctree/synctree/blob/main/CloudFormation_Sample_Parameter.txt)
+![enter_value](https://user-images.githubusercontent.com/103020388/190582350-92713d5a-046f-469f-a563-a80b8bb759a8.png)
+
+<br>
+
+Press next button at the bottom.
+![stack_next](https://user-images.githubusercontent.com/103020388/190582420-774abc29-4af5-4664-8f24-cb65717909ee.png)
+
+<br>
+
+Press next button.
+![advanced_option](https://user-images.githubusercontent.com/103020388/190586172-2103f5aa-d790-425c-8b59-669ec481599a.png)
+
+<br>
+
+Check the check box and press Create stack button.
+![create_stack_2](https://user-images.githubusercontent.com/103020388/190582496-11ece7db-9e51-47fb-b59d-da751b3a1d18.png)
+
+<br>
+
+The installation takes about 20 to 30 minutes.
+![start_stack](https://user-images.githubusercontent.com/103020388/190585458-2744b452-815f-4e85-bc78-3546dcd88f40.png)
+
+<br>
+
+# Connect Bastion Server For Installation
 
 <br>
 
@@ -69,7 +122,7 @@ End
 
 <br>
 
-# Tools for Installation
+# Check Tools for Installation
 
 <br>
 
@@ -81,6 +134,7 @@ Make sure you have these tools installed to install SyncTree solutions. These to
 * eksctl
 * kubectl
 * cmctl
+* docker
 
 <br>
 
@@ -136,6 +190,7 @@ Check kubectl installation.
 kubectl version
 ```
 Example output:
+  * Note. You can ignore the error message at this point.
 ```
 Client Version: version.Info{Major:"1", Minor:"23", GitVersion:"v1.23.5", GitCommit:"c285e781331a3785a7f436042c65c5641ce8a9e9", GitTreeState:"clean", BuildDate:"2022-03-16T15:58:47Z", GoVersion:"go1.17.8", Compiler:"gc", Platform:"linux/amd64"}
 ```
@@ -227,9 +282,11 @@ Run the command below to create and save environment variables to a file for fut
 
 ```
 export AWS_ACCOUNTID=`aws sts get-caller-identity | jq '.Account' | sed 's/\"//g'`
+sed -i "/AWS_ACCOUNTID/d" ~/env.sh
 echo "export AWS_ACCOUNTID=$AWS_ACCOUNTID" >> ~/env.sh
 
 export AWS_REGION=`aws configure get region`
+sed -i "/AWS_REGION/d" ~/env.sh
 echo "export AWS_REGION=$AWS_REGION" >> ~/env.sh
 ```
 
@@ -382,61 +439,22 @@ git clone https://github.com/ntuple-synctree/install-synctree.git
 
 <br>
 
+# Choose Manual or Automatic Installation
+
+<br>
+
+If you want to install automatically, go to the link below and proceed with the installation according to the guide
+<br>
+https://github.com/ntuple-synctree/synctree-auto
+
+<br>
+
+If you want to install it manually, you can proceed with the next step.
+
+<br>
+
+
 # Create Database Schema
-
-<br>
-
-> Warning.
-> <br>- Schema creation proceeds only during initial deployment.
-> <br>- If you proceed with the operation after implementation, the existing data will be deleted.
-
-<br>
-
-Go to the installation scripts folder.
-```
-cd /home/ec2-user/install-synctree
-```
-
-<br>
-
-Set execute permission
-<br>
-```
-chmod +x ./set-admin-password.sh
-```
-
-<br>
-
-Set password for admin account for schema creation. Set password within ' ' as in Example.
-```
-./set-admin-password.sh your-admin-password
-```
-Example:
-```
-./set-admin-password.sh 'Password1!'
-```
-<br>
-
-Check the password setting with the command below.
-
-```
-cat ./sql/data/0.Database_User_Create.sql | grep IDENTIFIED
-```
-Example:
-```
-CREATE USER 'admin'@'%' IDENTIFIED BY 'MyPassword1!';
-```
-
-<br>
-
-Check the password setting with the command below.
-```
-cat ./sql/log/0.Database_User_Create.sql | grep IDENTIFIED
-```
-Example:
-```
-CREATE USER 'admin'@'%' IDENTIFIED BY 'MyPassword1!';
-```
 
 <br>
 
@@ -454,14 +472,14 @@ Set account information to log in to SyncTree Studio. Set password within ' ' as
 ```
 Example:
 ```
-./set-studio-password.sh root root@test.com 'MyPassword1!'
+./set-studio-password.sh root root@test.com 'root1234!'
 ```
 
 <br>
 
 Check that user information is saved by running the command below.
 ```
-cat ./sql/data/8.Account_Data_Insert.sql | grep -e "SET @name" -e "SET @email" -e "SET @passphrase"
+cat ./sql/03.DataDB_Account_Data_Insert.sql | grep -e "SET @name" -e "SET @email" -e "SET @passphrase"
 ```
 Example output:
 ```
@@ -475,7 +493,6 @@ SET @passphrase = 'MyPassword1!';
 Set environment variables for future operations. Copy and run the command below.
 
 ```
-unset ADMIN_PASSWORD
 unset STUDIO_USER_PASSWORD
 source ~/env.sh
 ```
@@ -485,28 +502,27 @@ source ~/env.sh
 Check environment variable settings.
 
 ```
-env | grep -e "ADMIN_PASSWORD" -e "STUDIO_USER_PASSWORD"
+env | grep -e "STUDIO_USER_PASSWORD"
 ```
 Example output:
 ```
-ADMIN_PASSWORD=MyPassword1!
-STUDIO_USER_PASSWORD=MyPassword1!
+STUDIO_USER_PASSWORD=root1234!
 ```
 
 <br>
 
 Copy and run the command below for Log Database setup.
 ```
-cp ./templates/9.Shard_Info_Data_Insert.sql ./sql/data/
-sed -i "s/YOUR-AURORA-LOG-ENDPOINT/$AURORA_LOG_ENDPOINT/g" ./sql/data/9.Shard_Info_Data_Insert.sql
-sed -i "s/YOUR-AURORA-LOG-PORT/$AURORA_LOG_PORT/g" ./sql/data/9.Shard_Info_Data_Insert.sql
+cp ./templates/04.DataDB_Shard_Info_Data_Insert.sql ./sql/
+sed -i "s/YOUR-AURORA-LOG-ENDPOINT/$AURORA_LOG_ENDPOINT/g" ./sql/04.DataDB_Shard_Info_Data_Insert.sql
+sed -i "s/YOUR-AURORA-LOG-PORT/$AURORA_LOG_PORT/g" ./sql/04.DataDB_Shard_Info_Data_Insert.sql
 ```
 
 <br>
 
 Check the dns address and port of the two @connection_string sections below.
 ```
-cat ./sql/data/9.Shard_Info_Data_Insert.sql
+cat ./sql/04.DataDB_Shard_Info_Data_Insert.sql
 ```
 Example output:
 ```
@@ -555,16 +571,11 @@ Example output:
 
 Run the command below to create a schema for the database for storing synctree data.
 ```
-mysql -h $AURORA_DATA_ENDPOINT -u $AURORA_DATA_USERNAME -p$AURORA_DATA_PASSWORD < ./sql/data/0.Database_User_Create.sql
-mysql -h $AURORA_DATA_ENDPOINT -u admin -p$ADMIN_PASSWORD < ./sql/data/1.synctree_agent.sql
-mysql -h $AURORA_DATA_ENDPOINT -u admin -p$ADMIN_PASSWORD < ./sql/data/2.synctree_auth.sql
-mysql -h $AURORA_DATA_ENDPOINT -u admin -p$ADMIN_PASSWORD < ./sql/data/3.synctree_marketplace.sql
-mysql -h $AURORA_DATA_ENDPOINT -u admin -p$ADMIN_PASSWORD < ./sql/data/4.synctree_plan.sql
-mysql -h $AURORA_DATA_ENDPOINT -u admin -p$ADMIN_PASSWORD < ./sql/data/5.synctree_portal.sql
-mysql -h $AURORA_DATA_ENDPOINT -u admin -p$ADMIN_PASSWORD < ./sql/data/6.synctree_studio.sql
-mysql -h $AURORA_DATA_ENDPOINT -u admin -p$ADMIN_PASSWORD < ./sql/data/7.Default_Data_Insert.sql
-mysql -h $AURORA_DATA_ENDPOINT -u admin -p$ADMIN_PASSWORD < ./sql/data/8.Account_Data_Insert.sql
-mysql -h $AURORA_DATA_ENDPOINT -u admin -p$ADMIN_PASSWORD < ./sql/data/9.Shard_Info_Data_Insert.sql  
+mysql -h $AURORA_DATA_ENDPOINT -u $AURORA_DATA_USERNAME -p$AURORA_DATA_PASSWORD < ./sql/00.DataDB_User_Create.sql
+mysql -h $AURORA_DATA_ENDPOINT -u admin -p$ADMIN_PASSWORD < ./sql/01.DataDB_synctree_script.sql
+mysql -h $AURORA_DATA_ENDPOINT -u admin -p$ADMIN_PASSWORD < ./sql/02.DataDB_Default_Insert.sql
+mysql -h $AURORA_DATA_ENDPOINT -u admin -p$ADMIN_PASSWORD < ./sql/03.DataDB_Account_Data_Insert.sql
+mysql -h $AURORA_DATA_ENDPOINT -u admin -p$ADMIN_PASSWORD < ./sql/04.DataDB_Shard_Info_Data_Insert.sql
 ```
 
 <br>
@@ -600,9 +611,9 @@ As shown below, check that a total of 6 databases have been created: synctree_ag
 
 Run the command below to create a schema for the database for storing synctree log.
 ```
-mysql -h $AURORA_LOG_ENDPOINT -u $AURORA_LOG_USERNAME -p$AURORA_LOG_PASSWORD < ./sql/log/0.Database_User_Create.sql
-mysql -h $AURORA_LOG_ENDPOINT -u $AURORA_LOG_USERNAME -p$AURORA_LOG_PASSWORD < ./sql/log/1.synctree_studio_logdb.sql
-mysql -h $AURORA_LOG_ENDPOINT -u $AURORA_LOG_USERNAME -p$AURORA_LOG_PASSWORD < ./sql/log/2.Log_Default_Data_Insert.sql  
+mysql -h $AURORA_LOG_ENDPOINT -u $AURORA_LOG_USERNAME -p$AURORA_LOG_PASSWORD < ./sql/00_1.LogDB_User_Create.sql
+mysql -h $AURORA_LOG_ENDPOINT -u $AURORA_LOG_USERNAME -p$AURORA_LOG_PASSWORD < ./sql/01_1.LogDB_synctree_script.sql
+mysql -h $AURORA_LOG_ENDPOINT -u $AURORA_LOG_USERNAME -p$AURORA_LOG_PASSWORD < ./sql/02_1.LogDB_Default_Insert.sql  
 ```
 
 <br>
@@ -942,9 +953,10 @@ Example output:
 Run the command below to add a policy to the IAM Role.
 
 ```
-output=`aws iam list-roles | grep "eksctl-$EKS_CLUSTER_NAME-addon-iamservice" | grep $AWS_ACCOUNTID | sed 's/\"//g'`
+output=`aws iam list-roles | grep "eksctl-$EKS_CLUSTER_NAME-addon-iamservice" | grep $AWS_ACCOUNTID | sed 's/\"//g' | sed 's/,//g'`
 eks_iam_service_role_arn=${output#*role/}
 
+sed -i "/EKS_IAM_SERVICE_ROLE_ARN/d" ~/env.sh
 echo "export EKS_IAM_SERVICE_ROLE_ARN=$eks_iam_service_role_arn" >> ~/env.sh
 
 aws iam attach-role-policy \
@@ -982,7 +994,7 @@ Example output:
 <br>
 
 > Note.  
-<br>The --role-name above can be seen in the CloudFormation stack, click on the part starting with eksctl below. 
+<br>The --role-name above can be seen in the CloudFormation stack, click on the part starting with eksctl below. When executing the above command, it is automatically extracted and executed, so please refer to this part only.
 ![cloudformation_eksctl1](https://user-images.githubusercontent.com/103020388/163307745-a1e6c0a2-a083-44e2-936f-28e48bf8eb3d.png)  
 <br>Use the Physical ID in the Resources tab
 ![cloudformation_eksctl2](https://user-images.githubusercontent.com/103020388/163296374-426a0bdd-6a79-44be-b95c-d2c0b738dbe6.png)
@@ -1067,25 +1079,16 @@ Example Output:
 
 Run the command below to add a policy to the IAM Role.
 ```
-output=`aws iam list-roles | grep EKSWorkerNodeRoleForSyncTree | grep $AWS_ACCOUNTID | sed 's/\"//g'`
-eks_worker_role_arn=${output#*role/}
-
-echo "export EKS_WORKER_ROLE_ARN=$eks_worker_role_arn" >> ~/env.sh
-
 aws iam attach-role-policy \
---role-name $eks_worker_role_arn \
+--role-name EKSWorkerNodeRoleForSyncTree \
 --policy-arn arn:aws:iam::$AWS_ACCOUNTID:policy/AWSMArketPlaceRegisterUsageIAMPolicy
-
-source ~/env.sh
 ```
 
 <br>
 
 Run the command below and check if below policy is output in PolicyName:
-
-* AWSLoadBalancer ControllerAdditionalIAMPolicy
 ```
-aws iam list-attached-role-policies --role-name $eks_worker_role_arn
+aws iam list-attached-role-policies --role-name EKSWorkerNodeRoleForSyncTree
 ```
 Example Output:
 ```
@@ -1147,11 +1150,13 @@ sed -i "s/YOUR-ELASTICACHE-PORT/$ELASTICACHE_PORT/" ./synctree/deploy/credential
 sed -i "s/YOUR-AURORA-DATA-ENDPOINT/$AURORA_DATA_ENDPOINT/" ./synctree/deploy/credentials
 sed -i "s/YOUR-AURORA-DATA-PORT/$AURORA_DATA_PORT/" ./synctree/deploy/credentials
 sed -i "s/YOUR-ADMIN-PASSWORD/$ADMIN_PASSWORD/" ./synctree/deploy/credentials
-sed -i "s/YOUR-PORTAL-DOMAIN-KEY/$PORTAL_DOMAIN_KEY/" ./synctree/deploy/credentials
+sed -i "s/YOUR-PORTAL-DOMAIN-KEY/$PORTAL_DOMAIN_KEY/g" ./synctree/deploy/credentials
 
 cp ./templates/php.ini ./synctree/deploy/
 sed -i "s/YOUR-ELASTICACHE_ENDPOINT/$ELASTICACHE_ENDPOINT/" ./synctree/deploy/php.ini
 sed -i "s/YOUR-ELASTICACHE_PORT/$ELASTICACHE_PORT/" ./synctree/deploy/php.ini
+
+echo "AWS_ACCOUNTID=`aws sts get-caller-identity | jq '.Account' | sed 's/\"//g'`" >> ./synctree/deploy/aws.txt
 ```
 <br>
 
@@ -1379,7 +1384,7 @@ Run set-cert-domain.sh.
 ```
 Example
 ```
-./set-cert-domain.sh arn:aws:acm:ap-northeast-2:013817514782:certificate/2e7d0g9b-134b-4253-c3e4-57f0b2e5615f mydomain.com
+./set-cert-domain.sh arn:aws:acm:ap-northeast-2:052908120200:certificate/709966d8-7cb8-4d30-919d-e643e9b979f0 mydomain.com
 ```
 
 <br>
@@ -1419,6 +1424,31 @@ spec:
 
 <br>
 
+Check the domain name settings in synctree credentials
+```
+cat ./synctree/deploy/credentials
+```
+
+* Make sure that the domain name of a,b,c,d in endpoint section and the domain name of portal section are changed.
+* synctree-testing and synctree-auth must be used as fixed values.
+```
+[end-point]
+synctree-studio="https://studio.mp.synctreestudio.com"
+synctree-tool="https://tool.mp.synctreestudio.com/plan/entrance"
+synctree-tool-proxy="https://api.mp.synctreestudio.com{base-path}"
+synctree-portal="https://portal.mp.synctreestudio.com"
+synctree-portal-admin="https://portal-admin.mp.synctreestudio.com"
+synctree-testing="http://synctree-testing.synctree.svc/plan/entrance"
+synctree-auth="http://synctree-tool.synctree.svc/auth"
+
+[portal]
+domain_key["portal.mp.synctreestudio.com"]="97E02FD29B81"
+domain_key["portal-admin.mp.synctreestudio.com"]="97E02FD29B81"
+
+```
+
+<br>
+
 Apply ingress.yaml
 ```
 cd /home/ec2-user/install-synctree/synctree/alb
@@ -1433,7 +1463,7 @@ ingress.networking.k8s.io/synctree-ingress configured
 
 Check HTTPS 443 rules of Load Balancer.
 
-![alb_rule1](https://user-images.githubusercontent.com/103020388/163304154-cfaea743-face-42c9-84df-8b49737fb475.png)
+![alb_rule1](https://user-images.githubusercontent.com/103020388/192662907-b1b8bc5c-303e-4cc3-8610-b5ceb6670652.png)
 
 
 <br>
