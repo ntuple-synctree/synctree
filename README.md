@@ -29,7 +29,13 @@
 
 <br>
 
+Three Availability Zone(AZ)
 ![architectrual_diagram](https://user-images.githubusercontent.com/103020388/190327215-1285374e-08e1-42dc-87db-6725e8ad19e9.png)
+
+<br>
+
+Two Availability Zone(AZ)
+![architectural_diagram_2az](https://user-images.githubusercontent.com/103020388/205843996-fdf14021-a769-4a79-a6c9-915d6ebb383b.png)
 
 <br>
 
@@ -59,11 +65,23 @@ Move to CloudFormation page and press Create stack button.
 
 <br>
 
-Enter url below and press next button.
+The template should be selected according to the number of Availability Zone(AZ) in your region.
+
+<br>
+
+Option. 1) If you can use three Availability Zone(AZ) in your region, copy and use template below.
 ```
 https://synctree-marketplace.s3.amazonaws.com/synctree-marketplace.yaml
 ```
 ![specify_template](https://user-images.githubusercontent.com/103020388/190582234-b69c8c89-9eb6-460f-a6ad-da8a828f472e.png)
+
+<br>
+
+Option. 2) If you can use two Availability Zone(AZ) in your region, copy and use template below.
+```
+https://synctree-marketplace.s3.amazonaws.com/synctree-marketplace-2az.yaml
+```
+![image](https://user-images.githubusercontent.com/103020388/205840392-4780de4b-64e4-42f4-860c-1f9755aa0cc9.png)
 
 <br>
 
