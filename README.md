@@ -14,7 +14,9 @@
   * EKS Worker Nodes : t3.medium (Minimum 50 GB disk)
   * Amazon Aurora : db.t3.medium
   * Elasticache for Redis : cache.t3.micro
-  * EC2 for bastion server : t2.micro
+  * EC2 for bastion server : t3.micro
+  * Bastion server image must be Amazon Linux 2 AMI (HVM)
+  * (The install scripts was written based on Amazon Linux 2 AMI)
 * You can proceed with cloudformation by referring to the attached sample parameter values.
 
 <br>
